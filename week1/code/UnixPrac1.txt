@@ -1,0 +1,22 @@
+
+cd ../data #Switch to the data directory in the parent directory
+
+#1 # Count the lines
+wc -l 407228326.fasta; wc -l 407228412.fasta; wc -l E.coli.fasta 
+wc -l *.fasta
+
+
+#2 # Printing from the second line of the input
+tail -n +2 E.coli.fasta 
+
+
+#3 Skip the header line, count the sequence length of this genome
+tail -n +2 E.coli.fasta | wc -c; tail -n +2 407228412.fasta | wc -c; tail -n +2 407228326.fasta | wc -c
+
+#4 Skip the header line, remove all newline characters, then count how many times 'ATGC' appears
+tail -n +2 E.coli.fasta | tr -d '\n' | grep -o 'ATGC' | wc -l; tail -n +2 407228412.fasta | tr -d '\n' | grep -o 'ATGC' | wc -l; tail -n +2 407228326.fasta | tr -d '\n' | grep -o 'ATGC' | wc -l
+
+
+#5 Skip the header, remove newline characters, then count the ratio and formatted to 3 decimal places
+ratio=$(echo "scale=3; $(tail -n +2 E.coli.fasta | tr -d '\n' | grep -o '[AT]' | wc -l)/$(tail -n +2 E.coli.fasta |  tr -d '\n' | grep -o '[GC]' | wc -l)" | bc); echo $ratio
+
