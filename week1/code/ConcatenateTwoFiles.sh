@@ -4,7 +4,7 @@
 ext1="${1##*.}"
 ext2="${2##*.}"
 
-#Check whether the number of input is correct/whether the input files are exist/whether thier extensions match
+#Check whether the number of input is correct(exactly 3)/whether the input files are exist/whether thier extensions match
 if [ "$#" -eq 3 ] && [ -f "$1" ] && [ -f "$2" ] && [ "$ext1" = "$ext2" ]; then
    #If all conditions are met and the output file does not exist, create it automatically
    if [ ! -e "$3" ]; then
