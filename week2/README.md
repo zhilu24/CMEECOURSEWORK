@@ -7,7 +7,7 @@ Key exercises involve:
 
 Languages and Tools Used:
 Shell Scripting (Bash): The scripts are written in Bash
-UNIX Commands: Basic UNIX commands like grep, wc, tr, tail, and cat 
+UNIX Commands: Basic UNIX commands like grep, wc, tr, tail, and cat.
  
 Dependencies/Installation:
 This project does not require any special dependencies beyond a standard UNIX-like environment. All necessary tools should already be available in most UNIX-based systems like Linux or macOS. No additional third-party packages are required.
