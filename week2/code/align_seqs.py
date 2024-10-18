@@ -1,5 +1,6 @@
 import csv
 import ipdb
+import os
 
 def read_sequences_from_csv(file_name: str) -> tuple[str, str]:
     with open(file_name,mode='r') as file:
@@ -33,6 +34,12 @@ def calculate_score(s1: str, s2: str, l1: int, l2: int, startpoint: int) -> tupl
     return score, matched
 
 def save_best_alignment_to_file(file_name: str, best_alignment:str, best_score:int, s1:str):
+    # Check if the directory exists, and create it if necessary
+    dir_name = os.path.dirname(file_name)
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+        print(f"Directory {dir_name} created.")
+
     with open(file_name, mode='w') as file:
         file.write(f"Best alignment:\n{best_alignment}\n{s1}\n")
         file.write(f"Best score: {best_score}\n")

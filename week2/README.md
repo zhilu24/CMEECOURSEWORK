@@ -1,25 +1,45 @@
-PROJECT NAME: BOOTCAMP ASSIGNMENT WEEK 1
+# PROJECT NAME: BOOTCAMP ASSIGNMENT WEEK 2
 
-Project Overview: This project is focused on basic UNIX programming practice and shell scripting exercises. The goal is to build familiarity with UNIX commands and scripting using shell scripts. It includes basic tasks such as file manipulation, sequence analysis, and format conversion. 
-Key exercises involve: 
-1. Building familiarity with UNIX directory structures, working with command arguments, redirections, and pipes
-2. Writing shell scripts to automate tasks such as file format conversions and developing robust scripts that check input validity.
+## Project Overview: 
+This project is focused on biological computing in python and basic skills in latex writing. The goal to equip users with a solid foundation in python programming while introducing essential concepts such as data structures, functions, control flow, and the use of scientific packages like Numpy.
 
-Languages and Tools Used:
-Shell Scripting (Bash): The scripts are written in Bash
-UNIX Commands: Basic UNIX commands like grep, wc, tr, tail, and cat.
- 
-Dependencies/Installation:
-This project does not require any special dependencies beyond a standard UNIX-like environment. All necessary tools should already be available in most UNIX-based systems like Linux or macOS. No additional third-party packages are required.
-There is no special installation process for this project. 
+## Languages and Tools Used:
 
-Ptoject Structure and Usage:
-CMEECourseWork/week1
--code/ #contains shell scripts exercise and unixpractice
--data/ #contains CSV and FASTA data files used in the exercise
--result/ #result files generated after script execution
--sandbox/ draft files
+### IPython3: 
+An enhanced interactive Python shell with advanced features like auto-completion and magic commands.
 
-Author:
+### Library
+ - NumPy: A Python library for numerical computing,especially for handing arrays and matrices.
+
+## Dependencies/Installation:
+python 3.x, ipython, Numpy
+
+installation: 1. install dependencies 2. run the script with ipython filename (eg. ipython lc1.py)
+
+## Project Structure and Usage:
+
+### CMEECourseWork/week2
+
+#### -code
+#contains seven practice assignments. 
+
+lc1.py, lc2.py, tuple.py and dictionary.py : Focus on tasks related to loop and list comprehensions task.
+
+cfexercise1.py: Related to tasks involving control flow.
+
+align_seqs.py: Used for aligning DNA sequences.
+
+oaks_debugme.py: Addressing the problem of identifying missing oak species.
+
+#### -data 
+#contains CSV data files used in the exercise: sequences.csv used with the align_seqs.py script and TestOaksDara.csv used with the oaks_debugme.py script.
+
+#### -result
+#result files generated after script execution
+
+#### -gitignore
+#some unrelated files (such as class exercises or tests)
+
+## Author:
 Name: Zhilu Zhang
 Contact: zhilu.zhang24@imperial.ac.uk
