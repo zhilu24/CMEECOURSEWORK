@@ -1,9 +1,9 @@
-i <- 0 #Initialize i
+i <- 0 
     while (i < Inf) {
         if (i == 10) {
             break 
-        } else { # Break out of the while loop!  
+        } else {  
             cat("i equals " , i , " \n")
-            i <- i + 1 # Update i
+            i <- i + 1 
     }
 }

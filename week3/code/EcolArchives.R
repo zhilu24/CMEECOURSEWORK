@@ -1,5 +1,5 @@
 MyDF <- read.csv("../data/EcolArchives-E089-51-D1.csv")
-dim(MyDF) #check the size of the data frame you loaded
+dim(MyDF) 
 str(MyDF)
 head(MyDF)
 

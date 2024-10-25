@@ -18,12 +18,12 @@ file.exists("../data/trees.csv")
 
 head(MyData)
 
-MyData <- read.csv("../data/trees.csv", skip = 5) # skip first 5 lines
+MyData <- read.csv("../data/trees.csv", skip = 5) 
 
 write.csv(MyData, "../results/MyData.csv")
-dir("../results/") # Check if it worked
-write.table(MyData[1,], file = "../results/MyData.csv",append=TRUE) # append
-write.csv(MyData, "../results/MyData.csv", row.names=TRUE) # write row names
+dir("../results/") 
+write.table(MyData[1,], file = "../results/MyData.csv",append=TRUE) 
+write.csv(MyData, "../results/MyData.csv", row.names=TRUE) 
 write.table(MyData, "../results/MyData.csv", col.names=FALSE)
 
 source("basic_io.R")
@@ -35,7 +35,7 @@ if (a == TRUE) {
     print ("a is FALSE")
 }
 
-z <- runif(1) ## Generate a uniformly distributed random number
+z <- runif(1) 
 if (z <= 0.5) {print ("Less than a half")}
 
 # FOR LOOPS
@@ -64,19 +64,19 @@ while (i < 10) {
     print(i^2)
 }
 
-i <- 0 #Initialize i
+i <- 0
     while (i < Inf) {
         if (i == 10) {
             break 
-        } else { # Break out of the while loop!  
+        } else { 
             cat("i equals " , i , " \n")
-            i <- i + 1 # Update i
+            i <- i + 1 
     }
 }
 
 # USING NEXT
 for (i in 1:10) {
-  if ((i %% 2) == 0) # check if the number is odd
-    next # pass to next iteration of loop 
+  if ((i %% 2) == 0) 
+    next 
   print(i)
 }

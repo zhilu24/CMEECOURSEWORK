@@ -1,5 +1,5 @@
-SomeOperation <- function(v) { # (What does this function do?)
-  if (sum(v) > 0) { #note that sum(v) is a single (scalar) value
+SomeOperation <- function(v) { 
+  if (sum(v) > 0) { 
     return (v * 100)
   } else { 
   return (v)
