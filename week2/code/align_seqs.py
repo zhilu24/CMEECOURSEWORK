@@ -3,6 +3,24 @@ import ipdb
 import os
 
 def read_sequences_from_csv(file_name: str) -> tuple[str, str]:
+    """     
+    Reads two sequences from a CSV file.     
+        Args:     
+        - file_name (str): Path to the CSV file.    
+         Returns:     
+         - tuple: Two sequences as strings.     
+         Raises:    
+         - ValueError: If the file does not contain at least two sequences.     
+    """
+    with open(file_name, mode='r') as file:
+        csv_reader = csv.reader(file)
+        sequences = [row[0] for row in csv_reader if row]
+    if len(sequences) < 2:
+        raise ValueError("The CSV file must contain at least two sequences.")
+    ipdb.set_trace()  # Debug point 
+    return sequences[0], sequences[1]
+
+def read_sequences_from_csv(file_name: str) -> tuple[str, str]:
     """
     Reads two sequences from a CSV file.
 
@@ -106,10 +124,10 @@ def find_best_alignment(seq_file: str, output_file: str):
     my_best_align = None
     my_best_score = -1
 
-    for i in range(l1): # Note that you just take the last alignment with the highest score
+    for i in range(l1): 
         z, _ = calculate_score(s1, s2, l1, l2, i)
         if z > my_best_score:
-                my_best_align = "." * i + s2 # think about what this is doing!
+                my_best_align = "." * i + s2 
                 my_best_score = z
 
     save_best_alignment_to_file(output_file, my_best_align, my_best_score, s1)
