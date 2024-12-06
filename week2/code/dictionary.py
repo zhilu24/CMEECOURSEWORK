@@ -1,3 +1,25 @@
+"""
+This script creates a dictionary called `taxa_dic` that maps order names to sets of taxa from the provided list `taxa`.
+The script includes two solutions:
+1. A for-loop implementation to populate the dictionary.
+2. A list comprehension that achieves the same result.
+ 
+Example:
+Input:
+    taxa = [
+        ('Myotis lucifugus', 'Chiroptera'),
+        ('Gerbillus henleyi', 'Rodentia'),
+        ...
+    ]
+Output:
+    {
+        'Chiroptera': {'Myotis lucifugus'},
+        'Rodentia': {'Gerbillus henleyi', 'Peromyscus crinitus', ...},
+        ...
+    }
+"""
+
+
 taxa = [ ('Myotis lucifugus','Chiroptera'),
          ('Gerbillus henleyi','Rodentia',),
          ('Peromyscus crinitus', 'Rodentia'),

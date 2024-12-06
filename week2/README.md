@@ -1,44 +1,47 @@
 # PROJECT NAME: BOOTCAMP ASSIGNMENT WEEK 2
 
 ## Project Overview: 
-This project is focused on biological computing in python and basic skills in latex writing. The goal to equip users with a solid foundation in python programming while introducing essential concepts such as data structures, functions, control flow, and the use of scientific packages like Numpy.
+This project is all the coursework from week2. It is focus on biological computing in python and basic skills in latex writing. The goal to equip users with a solid foundation in python programming while introducing essential concepts such as data structures, functions, control flow, and the use of scientific packages like Numpy.
 
 ## Languages and Tools Used:
 
-### IPython3: 
+`IPython3`: 
 An enhanced interactive Python shell with advanced features like auto-completion and magic commands.
 
 ### Library
  - NumPy: A Python library for numerical computing,especially for handing arrays and matrices.
+ `ipdb`
 
 ## Dependencies/Installation:
 python 3.x, ipython, Numpy
 
-installation: 1. install dependencies 2. run the script with ipython filename (eg. ipython lc1.py)
+installation: install using `sudo apt install python-packagename` or `pip`
+running the script with ipython filename (eg. ipython lc1.py) in terminal
 
 ## Project Structure and Usage:
 
 ### CMEECourseWork/week2
 
-#### -code
-#contains seven practice assignments. 
+#### code
 
-lc1.py, lc2.py, tuple.py and dictionary.py : Focus on tasks related to loop and list comprehensions task.
+**lc1.py, lc2.py, tuple.py and dictionary.py** : Focus on tasks related to loop and list comprehensions task.
 
-cfexercise1.py: Related to tasks involving control flow.
+**cfexercise1.py**: Related to tasks involving control flow and using docstrings.
 
-align_seqs.py: Used for aligning DNA sequences.
+**align_seqs.py**: This script is designed to improve its functionality for aligning DNA sequences. It includes align two DNA sequences and determine the best match based on the number of matching bases. It reads DNA sequences form the input file `sequences.csv` in the `data` directory. Then save the best alignment and its score to a new output file `best_alignment.txt` in the `result` directory.
 
-oaks_debugme.py: Addressing the problem of identifying missing oak species.
+**oaks_debugme.py**: Addressing the problem of identifying missing oak species. It filters out the rows where the genus is Quercus. The input file is `TestOaksData.csv` in the `data` directory. The output file will be written to the `results` directory as `JustOaksData.csv` and will contain rows where the genus is Quercus.
 
-#### -data 
-#contains CSV data files used in the exercise: sequences.csv used with the align_seqs.py script and TestOaksDara.csv used with the oaks_debugme.py script.
+The other code files from the in-class exercise practices.
 
-#### -result
-#result files generated after script execution
+#### data 
+contains CSV data files used in the exercise.
 
-#### -gitignore
-#some unrelated files (such as class exercises or tests)
+#### result
+#result files generated after script execution.
+
+#### gitignore
+#some unrelated files 
 
 ## Author:
 Name: Zhilu Zhang

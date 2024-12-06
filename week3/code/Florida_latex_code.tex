@@ -1,0 +1,58 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+
+\usepackage{amsmath}
+ 
+\title{Analysis Temperature Trends in Florida}
+
+\author{Zhilu Zhang}
+
+\date{November 2024}
+ 
+\begin{document}
+ 
+\maketitle
+ 
+\section{Introduction}
+
+\vspace{-0.5em}
+
+This document presents the results of the correlation analysis of Key West annual mean temperatures. The goal of this analysis was to exam whether Florida is experiencing a warming trend over years.
+ 
+\section{Methods of Analysis}
+
+\vspace{-0.5em}
+
+The analysis consists of two parts. First, the original correlation coefficient between years and temperature was calculated. Second, the statistical significance of the correlation was assessed through 10,000 simulations. The frequency of randomly permuted correlations exceeding the original correlation was recorded to evaluate its significance.
+
+\section{Results \& Conclusion}
+
+\vspace{-0.5em}
+
+{\selectfont\subsubsection*{Results}
+
+\vspace{-0.5em}
+
+The original correlation coefficient between years and temperature was found to be 0.533. In the 10,000 simulations, none of the random correlation coefficients was greater than the original correlation. The approximate p-value is therefore:
+
+\vspace{-0.5em}
+
+\[
+
+\text{p-value} = \frac{0}{10000} = 0
+
+\]}
+ 
+{\selectfont\subsubsection*{Interpretation}
+
+The original correlation coefficient of 0.533 indicates a moderate positive relationship. For positive relationship, as the years increase, the temperature tends to rise.
+
+The approximate p-value 0 is much smaller than the commonly used significance level of 0.05, indicates that the original correlation is strong statistically significant and unlikely to have occurred by chance.}
+ 
+{\selectfont\subsubsection*{Conclusion}
+
+The positive correlation coefficient of 0.533, coupled with a p-value about 0, strongly suggests that Florida’s temperature has been increasing over the years. From this analysis, Florida is getting warmer.}
+ 
+\end{document}
+ 
