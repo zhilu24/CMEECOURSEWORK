@@ -1,0 +1,157 @@
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{a4paper, top=1in, bottom=1in, left=1in, right=1in}
+\usepackage{cite}
+\usepackage{amsmath}
+
+\begin{document}
+\begin{titlepage}
+    \begin{center}
+        \vspace*{5cm}
+        
+        \Large
+        \textbf{Gompertz Model Outperforms Logistic and Cubic Models in Predicting Bacterial Growth}
+        
+        \vspace{1.5cm}
+        
+        \Large
+        Zhilu Zhang
+        
+        \vspace{0.5cm}
+        
+        \textit{email: zhiluzhang.24@imperial.ac.uk}
+        
+        \vfill
+        
+        Supervised By: \\
+        Prof. Samraat Pawar
+        
+        \vspace{0.8cm}
+        
+        \Large
+        Word Count: 2964
+        
+        \vspace{0.8cm}
+        
+        Department of Life Sciences \\
+        Imperial College London
+    \end{center}
+\end{titlepage}
+
+\section{abstract}
+Accurately modeling microbial growth is essential for understanding population dynamics and optimizing applications in microbiology. This study evaluates the performance of three standard bacterial growth models—Logistic, Cubic, and Gompertz—using non-linear least squares (NLLS) optimization. Model selection was conducted based on three key criteria: coefficient of determination (\( R^2 \)), Akaike Information Criterion (AIC), and Bayesian Information Criterion (BIC).
+The results indicate that while Cubic and Logistic models have their advantages, the Gompertz model consistently outperformed the others, achieving the highest \( R^2 \) and the lowest AIC and BIC scores. This suggests that the asymmetric structure of the Gompertz model provides a better representation of bacterial growth, particularly for datasets exhibiting a lag phase. However, the study also highlights challenges associated with initial parameter estimation in NLLS fitting and further suggests work to improve model robustness.
+
+
+\section{Introduction}
+The study of microbial population growth dynamics has long been a central topic in microbiology, both for fundamental scientific understanding and practical applications.\cite{monod1949growth} There is an increasing recognition of the importance of accurately modeling microbial growth due to its broad implications. Microbial dynamics profoundly influence our daily lives, particularly through their applications in diverse fields such as medicine, food production, and environmental protection. Understanding microbial growth rates, therefore, is essential—not only because growth rate is a key biological trait, but also because it significantly shapes microbial community interactions and ultimately impacts ecosystem functioning.\cite{lipson2015complex} Mathematics models have been introduced to quantify and characterize these dynamics to accurately describe the growth trends of the microbial population. Mathematical models provide valuable tools for characterizing microbial growth dynamics in both natural ecosystems and experimental settings.\cite{wachenheim2003analysis} Such models represent biological processes in a simplified and generalized manner, providing valuable insights into the factors driving observed patterns. \cite{johnson2004model}  Typically, bacterial growth curves are characterized by an initial phase (lag phase) where the specific growth rate begins at zero, then gradually accelerates until reaching its maximum value, resulting in a clearly defined lag time. Following this phase, bacteria enter an exponential growth period before eventually transitioning into a stationary phase, during which the growth rate gradually declines to zero as the population approaches an asymptotic maximum size.
+
+In this report, the model selection method is introduced to identify the best-fitting growth model. Traditionally, biological inferences are drawn using null hypothesis testing.
+However, the null hypothesis typically lacks direct biological meaning, and support for a biologically meaningful hypothesis is only indirectly achieved through rejection of the null hypothesis. \cite{johnson2004model} In contrast, the model selection method which is a statistical approach for identifying the best-fitting model among several competing hypotheses, would allow us to compare multiple candidate models based on both goodness-of-fit and model complexity, ensuring a balance between accuracy and generalizability. Therefore, to achieve a comprehensive selection process, both mechanistic and phenomenological models were included in the analysis. Mechanistic models explicitly represent underlying biological processes or mechanisms, providing clear biological interpretation. Phenomenological models, on the other hand, are derived from empirical data without explicitly describing specific biological mechanisms, emphasizing predictive accuracy rather than biological interpretation.
+
+In this study, I aim to compare the logistic, cubic and gompertz models to determine which model best fits the observed bacterial growth data. Here, I propose an alternative hypothesis stating that the Gompertz model will outperform the logistic and cubic models for datasets exhibiting a clearly defined lag phase.
+
+\section{Methodology}
+\subsection{Data}
+The data were gathered from laboratory experiments conducted worldwide. To get a better quality of the data, I set negative time values to zero, and remove any invalid or missing values. There are 45 species, 18 growth mediums, and temperatures from 0\degree C to 37\degree C from 10 different articles. To ensure consistency and reduce data heterogeneity, the processed data were split into subsets based on unique combinations of four factors: species, growth medium, temperature, and data citation. There are 285 subdatasets and each unique combination was assigned an identifier (ID) and analyzed separately in the later part.
+
+\subsection{Model}
+The mathematical equation for each of these three models were derived from the literature.
+
+I selected three mathematical models to describe the microbial population growth. For the mechanistic model, the logistic model was selected as is increasingly being utilized to characterize microbial population growth patterns.\cite{johnson2004model} It is characterized by its sigmoidal growth curve, representing population growth with an initial exponential increase that slows down as it approaches a maximum carrying capacity. 
+\begin{equation}
+P(t) = \frac{K}{1 + \left(\frac{K - N_0}{N_0}\right) \cdot \exp(-r \cdot t)}
+\end{equation}
+Where:
+\begin{itemize}
+    \item \( P(t) \): Population size at time \( t \).
+    \item \( K \): Carrying capacity (maximum population).
+    \item \( r \): Growth rate of the population.
+    \item \( N_0 \): Initial population size.
+    \item \( t \): Time variable.
+\end{itemize}
+
+The Gompertz model is among the most commonly applied sigmoid models for fitting growth and other types of data, likely second only to the logistic model.\cite{2017Gompertz} It is a phenomenological model frequently used for microbial growth, defined by its asymmetric sigmoidal shape. It captures the lag phase effectively by accommodating a slower initial growth followed by rapid exponential growth before stabilizing. 
+\begin{equation}
+    P(t) = K \cdot \exp\left(-\exp\left(\frac{r_{\text{max}} \cdot e}{K} \cdot (t_{\text{lag}} - t) + 1\right)\right)
+\end{equation}
+
+Where:
+\begin{itemize}
+    \item \( P(t) \): Population size at time \( t \).
+    \item \( K \): Carrying capacity (maximum population).
+    \item \( r_{\text{max}} \): Maximum growth rate.
+    \item \( t_{\text{lag}} \): Lag time for population growth.
+    \item \( t \): Time variable.
+\end{itemize}
+
+The Cubic model, also a phenomenological approach, employs polynomial regression to represent microbial growth data. It offers greater flexibility, effectively capturing complex growth trajectories, including initial delays, exponential increases, and subsequent declines.
+
+\subsection{Model Fittin Approach}
+For the cubic model, I applied linear regression to fit the data. Linear regression is a method based on minimizing the residual sum of squares to estimate regression coefficients.
+For nonlinear models such as the Logistic and Gompertz models, I used the nlsLM method for optimizing the model fit, which is an implementation of the Levenberg-Marquardt algorithm for non-linear least squares optimization. NLLS is a method that estimates and optimizes model parameters by minimizing the residual sum of squares between model predictions and observed values. This approach allows for accurate parameter estimation and provides a precise fit to microbial population growth data. In this study, I set the maximum number of iterations to 500 to ensure convergence.
+
+Appropriately chosen initial values are essential in NLLS fitting, as they can significantly influence the fitting accuracy and prevent convergence to local minima. Thus, selecting suitable starting values is particularly important when comparing different models.\cite{zwietering1990modeling} However, considering that the primary focus of this research is the model itself rather than the choice of initial values, the choice of initial parameter values is also considered to minimize their impact on model selection. To ensure fairness and consistency, I set initial values systematically across models.
+
+Specifically, I first defined each model’s parameters by manually establishing equations to calculate initial estimates based on biological interpretations and then introduced random fluctuations around these estimates to avoid convergence to local optima. For the Logistic model, three parameters required initial estimates. The carrying capacity (K) was initialized at 1.2 times the maximum observed population size, preventing the sampled carrying capacity from falling below the maximum observed population due to random fluctuations. The initial population size (N0) was set as the minimum observed population size. For the intrinsic growth rate (r), I estimated its initial value based on early-phase growth rates, calculated as the difference in population sizes divided by corresponding time intervals.
+
+Similarly, for the Gompertz model, three parameters required initial estimation. The carrying capacity was initialized in the same way as for the Logistic model. However, since the Gompertz model’s growth rate parameter (rmax) represents the maximum growth rate across the entire observed time interval, I calculated the initial estimate using the maximum observed growth rate over the full experimental time interval rather than just the early phase. Additionally, I estimated the initial lag time (tlag) by identifying the time point at which the second derivative of the population growth curve reached its maximum value, indicating the transition from the lag phase to exponential growth.
+After determining these baseline initial estimates, I introduced randomness into the parameter selection to enhance fitting robustness. Specifically, multiple candidate values for each key parameter were generated by sampling from normal distributions centered around their initial estimates, allowing for controlled variation. For each set of sampled parameter values, I fitted the model using NLSLM optimization and assessed its goodness of fit using the coefficient of determination (R²). The parameter set yielding the highest R² was selected as the best fit. This method significantly reduces the risk of convergence to local optima, and improves model stability.
+Furthermore, in the final fitting stage, I applied an R² > 0.7 threshold as a filtering criterion for all three models. This decision was made after observing that many subsets, while technically fitting successfully, showed poor visual agreement between the model predictions and the actual data. In ecological and biostatistical research, an R² value greater than 0.7 is commonly regarded as an acceptable level of model fit.\cite{quinn2002experimental} By setting this threshold, the quality of successful fits was improved, ensuring that subsequent analyses were conducted based on reliable model results.
+
+\subsection{Selection Criteria}
+To determine the best-fitting model for each dataset, I compared the Cubic, Logistic, and Gompertz growth models using three key model selection criteria: the coefficient of determination (\( R^2 \), measuring goodness-of-fit), Akaike Information Criterion (AIC, balancing model fit and complexity), and Bayesian Information Criterion (BIC, similar to AIC but penalizing complexity more strongly).
+ For each dataset, the best-performing model was selected based on the highest \( R^2 \) and lowestAIC and BIC scores. Then I summarized the counts of how frequently each model performed best through these three criteria for each dataset and recorded the summary results in a CSV file. If no valid models met the evaluation criteria, a warning was generated to highlight data or fitting issues.
+
+ \subsection{Computer and language tools used}
+ I conducted the analysis using R Studio under the version of 4.2.1, leveraging several key R packages to facilitate data processing, model fitting, and visualization.  dplyr was used for efficient data manipulation, while tidyr helped restructure and organize datasets. Model fitting was performed using minpack.lm, which enabled nonlinear least squares optimization (nlsLM) for the Logistic and Gompertz models. Finally, ggplot2 was employed to create visual representations of the data and model fits, ensuring clear and interpretable results.
+
+ \section{Results}
+ The number of best-performing models under each criterion is summarized in Table 1. Overall, the Gompertz model consistently outperformed the other models across all criteria.
+Although the Cubic model achieved the highest number of successful fits, with 263 out of 285, the Gompertz model had a slightly lower success rate, with 242 successful fits out of 285. Based on \( R^2 \), where higher values indicate better fit, the Gompertz model was the best fit for 103 datasets. The Cubic model, which had the second-highest \( R^2 \) value, was the best model for 98 datasets, very close to the Gompertz model. This suggests that both Cubic and Gompertz models effectively captured the data patterns, with no significant difference between them. In contrast, the Logistic model only outperformed the others in 69 datasets.
+Based on AIC and BIC criteria, the ranking remained the same. Gompertz was again the top-performing model, best for 124 datasets. Under these criteria, the Logistic model performed better than the Cubic model.
+\begin{table}[h!]
+  \centering
+  \caption{Model Comparison Summary Based on R², AIC, and BIC}
+  \label{tab:model_comparison_summary}
+  \begin{tabular}{|l|l|l|l|}
+    \hline
+    \textbf{Model} & \textbf{R² Count} & \textbf{AIC Count} & \textbf{BIC Count} \\ \hline
+    Cubic          & 66                & 66                  & 66                  \\ \hline
+    Gompertz       & 124               & 124                 & 124                 \\ \hline
+    Logistic       & 80                & 80                  & 80                  \\ \hline
+  \end{tabular}
+\end{table}
+
+
+Here, I randomly picked a subset that all models could fit it. Figure 1 shows a visualization of the fit.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[scale=0.7]{Rplot.pdf}
+  \caption{Model Fits output}
+  \label{fig:yourlabel}
+\end{figure}
+
+
+\section{Discussion}
+Based on the model fitting and selection results, the Gompertz model emerged as the best-fitting model compared to the logistic model and cubic model. One potential reason is that the Gompertz model allows for an asymmetric growth pattern, characterized by slower initial growth, rapid acceleration during the intermediate phase, and gradual stabilization toward the end. Such behavior closely aligns with observed bacterial growth patterns. Moreover, unlike the Logistic model, the Gompertz model explicitly incorporates a lag phase, enabling more accurate fitting for datasets that exhibit a clearly defined lag phase. Since the majority of my datasets included a lag phase, this likely explains the Gompertz model’s superior performance. Accurate estimation of the lag phase duration is particularly crucial in the food industry and pharmaceutical sectors; for instance, underestimating the lag phase when predicting contamination risks of pathogens like Salmonella could result in inadequate disinfection process designs. \cite{juneja2007growth} Additionally, the Gompertz model's asymmetric S-shaped curve at the inflection point better captures the rapid transition from lag to exponential growth compared to the Logistic model’s symmetric curve, which might not adequately reflect abrupt changes in actual growth rates. \cite{baranyi1993logistic}
+
+Compared to the Cubic model, which offers higher flexibility but lacks clear biological interpretation and is prone to overfitting (thus making extrapolation less reliable), the Gompertz model provides a balance between flexibility and biological interpretability. The results of this study—Gompertz consistently achieving the highest \( R^2 \) and lowest AIC and BIC scores—are consistent with previous findings. Zwietering et al. (1990), for example, stated that "in almost all cases, the Gompertz model can be regarded as the best model to describe growth data," further supporting this conclusion
+
+However, despite the Gompertz model's superior performance based on this data-driven analysis, the differences in model performance were relatively minor. Due to the limited variability observed among the datasets and the monotonic nature of the evaluation criteria, confidently asserting Gompertz’s absolute superiority is challenging. The Gompertz model, in particular, might not be ideal when populations lack distinct lag phases or clearly exhibit a death phase. \cite{peleg2011microbial} Furthermore, alternative models possess distinct advantages under specific scenarios. The Logistic model provides clear biological interpretability, making it particularly suitable for populations showing stable growth with explicit resource limitations. Similarly, the Cubic model has the largest counts for successful fits. The flexibility of this model can effectively accommodate diverse or complex growth patterns, despite its weaker biological foundation.
+In scenarios where lag phases and death phases are minimal or absent, the Logistic model could potentially be the most suitable and best-performing model. Additionally, under conditions of limited resources or noisy data, the Logistic model remains a valid and effective alternative.
+For the lag phase advantage of the Gompertz model, the Baranyi model,\cite{baranyi1994dynamic} which also incorporates a lag phase, has been proposed in recent years. This model introduces a dynamic adjustment function, which may further improve the transition fitting from the lag phase to the exponential phase. Future studies could incorporate such advanced models into the comparison work.
+
+The non-linear least squares (NLLS) method employed in this study requires further discussion. Due to the sensitivity of non-linear models to initial parameter values, many fitting attempts resulted in NA values due to imprecise initial estimates. Specifically, the initial estimate for the intrinsic growth rate (r max) was determined based on the maximum growth rate observed during the early growth phase. But for example, if there were insufficient data points during the early growth stage, the estimate of max rate might be biased, potentially reducing the accuracy of model initialization. Similarly, the lag phase duration  was estimated by identifying the time point at which the second derivative of the growth curve reached its maximum value, Although biologically meaningful, this method is highly sensitive to data noise. Given that both the first and second derivatives are estimated from observed data, the resulting time lag estimates might become unstable or significantly deviate from a realistic value. Moreover, while introducing multiple randomized initializations improved the probability of identifying optimal solutions, the selection of the standard deviation (SD) for these random fluctuations was set arbitrarily. The lack of an adaptive mechanism for choosing these SD values may have introduced unrealistic initial values, potentially limiting model stability or causing fitting failures. Additionally, although some literature suggests that an \( R^2 \) value above 0.7 represents an acceptable model fit, whether setting \( R^2 \)  > 0.7 as a threshold is appropriate still needs further literature validation. To address these above issues, future work could adopt a hybrid modeling approach, preserving the mechanistic structure of growth models, while utilizing machine learning methods to predict how model parameters vary with environmental conditions. For example, moller, J.K., et al.(2020) combine the gompertz model to random forest, to predict r max and t lag under different temperature and PH value. On top of that, one could attempt to introduce dynamic modeling by incorporating time series data into the model to track the impact of changing environmental conditions on growth parameters. It might address the situation where the model for thus methodology may predict based on static environmental conditions. These adaptive approaches would enhance the accuracy and robustness of initial parameter estimation.
+Finally, although various evaluation criteria were used to assess model performance, justifying the choice of these criteria remains an important consideration. Future studies could implement methods such as cross-validation, and partitioning datasets into training and testing subsets, to more comprehensively evaluate model generalizability and robustness. This would help determine whether selected models generalize well beyond observed datasets, thereby reducing overfitting risks.
+
+\section{Conclusion}
+In summary, this report evaluates the fitting performance of three bacterial growth models optimized using the NLLS method, based on multiple model selection criteria. While the Cubic and Logistic models have their respective advantages, the Gompertz model emerged as the best fit, achieving the highest \( R^2 \) and the lowest AIC and BIC. This finding highlights the critical role of biological plausibility in statistical model comparisons—even when models have the same number of parameters, a well-designed and appropriate mechanistic structure can significantly enhance model performance.
+
+\pagebreak
+\bibliographystyle{plain}
+\bibliography{reference.bib}
+\end{document}
+
