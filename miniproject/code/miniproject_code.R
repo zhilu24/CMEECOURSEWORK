@@ -248,6 +248,12 @@ plot_model_fits <- function(data_subset, fit_results_cubic, fit_results_logistic
     return(NULL)
   }
   
+  # save the plot and set the path
+  output_path <- "../result/Model_Fits_Subset_"  
+  output_file <- paste0(output_path, subset_id, ".png")
+  png(output_file) # save as png
+  on.exit(dev.off())  
+  
   # draw the origin data plot
   plot(
     x = data_subset$Time,
@@ -381,7 +387,7 @@ for (i in seq_along(subdatasets)) {
 # combine all the results
 model_comparison <- do.call(rbind, Filter(Negate(is.null), results_list))
 if (nrow(model_comparison) > 0) {
-write.csv(model_comparison, "model_comparison_results_with_AIC_BIC.csv", row.names = FALSE)
+write.csv(model_comparison, "../result/model_comparison_results_with_AIC_BIC.csv", row.names = FALSE)
 print(model_comparison)
 
 # count the number of each best model
@@ -404,7 +410,7 @@ print(model_comparison)
   print(summary_table)
   
   # Optionally save the summary table as a CSV
-  write.csv(summary_table, "model_comparison_summary.csv", row.names = FALSE)
+  write.csv(summary_table, "../result/model_comparison_summary.csv", row.names = FALSE)
   
 } else {
   print("Warning: No valid model results to analyze or save.")
