@@ -9,7 +9,7 @@
 *.bbl
 *.blg
 *.gz
-*.DS_store
+*.DS_Store
  
  
 results/*
