@@ -22,7 +22,7 @@ install.packages("")
 
 Running the scripts:
 ```bash
-Rscript
+miniproject.sh
 ```
 ```R
 source("")
