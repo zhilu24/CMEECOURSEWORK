@@ -2,7 +2,7 @@
 rm(list = ls())
 graphics.off()
 
-source("MAIN.R")
+source("zz8024_HPC_2024_MAIN.R")
 
 iter <- as.numeric(Sys.getenv("PBS_ARRAY_INDEX"))
 
@@ -27,8 +27,9 @@ if (iter >= 1 && iter <= 25) {
  interval_rich <- 1
  interval_oct <- size/10
  burn_in_generations <- 8*size
- wall_time <- 11.5
+ wall_time <- 690
  
+# run the simulation
 neutral_cluster_run(
    speciation_rate = speciation_rate,
    size = size,
@@ -39,6 +40,6 @@ neutral_cluster_run(
  )
  
 
- output_file_name <- paste("neutral_simulation_result_iter", iter, "_size", size, ".rda", sep = "")
+ output_file_name <- paste("neutral_simulation_result_iter", iter, ".rda", sep = "")
 
  

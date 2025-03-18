@@ -164,7 +164,7 @@ question_5 <- function(){
     extinctions <- 0
     
     # Loop through each simulation file and determine which initial condition this file corresponds to
-    condition_files <- file_names[(seq_along(file_names) %% 4) == (i %% 4)]
+    condition_files <- file_names[(((seq_along(file_names) - 1) %% 4) + 1) == i]
     for (file in condition_files) {
       load(file)
       
@@ -191,12 +191,14 @@ question_5 <- function(){
       stop("error: no valid simulation found")
     }
     extinction_proportions <- extinction_counts / num_simulations
-    
+   
     # plot the bar graph
-    png(filename="question_5.png", width = 600, height = 400)
+    png(filename="question_5.png", width = 1000, height = 600)
+    y_max <- max(extinction_proportions) * 1.1
     barplot(extinction_proportions, names.arg = condition_labels,
             col = "blue", main = "Proportion of Leading Extinctions in Stochastic Simulation",
-            ylab = "Proportion of Populations Going Extinct", xlab = "Initial Conditions")
+            ylab = "Proportion of Populations Going Extinct", xlab = "Initial Conditions",
+            ylim = c(0, y_max))
 
     Sys.sleep(0.1)
     dev.off()
@@ -204,84 +206,129 @@ question_5 <- function(){
     most_possible_extinct <- condition_labels[which.max(extinction_proportions)]
    
   return(most_possible_extinct)
+    return("Among the four conditions, the extinction probability is highest for the Large Adults Population because it lacks reproductive capacity, has a high natural mortality rate. And it also suffer about the reduced genetic diversity.")
 }
 question_5()
 
-
-# Question 6
 question_6 <- function(){
-  # set the specific initial condition - 3 and 4
+  # Set the specific initial conditions - 3 and 4
   initial_state_3 <- state_initialise_spread(4, 100)
   initial_state_4 <- state_initialise_spread(4, 10)
   condition_labels_1 <- c("Large Evenly Distributed Population", "Small Evenly Distributed Population")
   
-  # obtain the simulation results
+  # Retrieve all simulation result files
   file_names <- list.files(path = "output_files", pattern = "simulation_results[0-9]+\\.rda$", full.names = TRUE)
-  for (file in file_names) {
-    load(file)  
-    
-  # store deviations
-  deviations <- list()
-  # store simulation
-  all_simulations <- list()
   
-  # ensure that only go through initial conditions 3 and 4
-  for (i in 1:2) {
-    condition_index <- i + 2 
+  # Store data
+  all_data <- list(big_spread = list(), small_spread = list())
+  
+  for (file in file_names) {
+    load(file)
     
-      # Determine which initial condition this file corresponds to
-      iter <- as.numeric(gsub("\\D", "", basename(file)))  
-      file_condition_index <- ((iter - 1) %% 4) + 1  
-      
-      # only keep initial conditions 3 and 4
-      if (file_condition_index == condition_index) {
-        all_simulations[[length(all_simulations) + 1]] <- results[[1]]
-      }
+    # Determine which initial condition this file corresponds to
+    iter <- as.numeric(sub(".*simulation_results([0-9]+)\\.rda$", "\\1", basename(file)))
+    file_condition_index <- ((iter - 1) %% 4) + 1
+    
+    # Only store initial conditions 3 and 4
+    if (file_condition_index == 3) {
+      all_data$big_spread <- append(all_data$big_spread, list(results[[1]]))
+    } else if (file_condition_index == 4) {
+      all_data$small_spread <- append(all_data$small_spread, list(results[[1]]))
     }
-
-      population_matrix <- do.call(cbind, all_simulations)
-      
-      # calculate the time step
-      stochastic_population_trend <- rowMeans(population_matrix, na.rm = TRUE)
-      # calculate the deterministic one
-      if (i == 1) {
-        deterministic_population_trend <- deterministic_simulation(initial_state_3)
-      } else {
-        deterministic_population_trend <- deterministic_simulation(initial_state_4)
-      }
-      # store the results
-      deviations[[condition_labels_1[i]]] <- deviation
   }
-      
-      # calculate the deviation
-      deviation <- stochastic_population_trend / deterministic_population_trend
-      
-      # check if the deviations are 0
-      if (length(deviations) == 0) {
-        stop("Error: No valid deviation data to plot!")
-      }
-      
-    # set y axis
-      y_min <- min(unlist(deviations), na.rm = TRUE)
-      y_max <- max(unlist(deviations), na.rm = TRUE)
-      
-  png(filename="question_6", width = 600, height = 400)
-  # plot your graph here
-  Sys.sleep(0.1)
-  dev.off()
+  
+  # Ensure data is not empty
+  if (length(all_data$big_spread) == 0 || length(all_data$small_spread) == 0) {
+    stop("Error: No valid simulation data found for initial conditions 3 and 4!")
+  }
+  
+  # Compute average population size
+  compute_mean_population <- function(results_list) {
+    num_simulations <- length(results_list)
+    simulation_length <- length(results_list[[1]])
+    population_trend <- matrix(0, nrow = simulation_length, ncol = num_simulations)
+    
+    for (i in 1:num_simulations) {
+      population_trend[, i] <- sapply(results_list[[i]], sum)  # Compute total population per time step
+    }
+    
+    return(rowMeans(population_trend, na.rm = TRUE))  # Compute mean population per time step
+  }
+  
+  mean_pop_IC3 <- compute_mean_population(all_data$big_spread)
+  mean_pop_IC4 <- compute_mean_population(all_data$small_spread)
+  
+  # Deterministic simulation settings
+  simulation_length <- length(mean_pop_IC3)
+  growth_matrix <- matrix(c(0.1, 0.0, 0.0, 0.0,
+                            0.5, 0.4, 0.0, 0.0,
+                            0.0, 0.4, 0.7, 0.0,
+                            0.0, 0.0, 0.25, 0.4),
+                          nrow=4, ncol=4, byrow=T)
+  
+  reproduction_matrix <- matrix(c(0.0, 0.0, 0.0, 2.6,
+                                  0.0, 0.0, 0.0, 0.0,
+                                  0.0, 0.0, 0.0, 0.0,
+                                  0.0, 0.0, 0.0, 0.0),
+                                nrow=4, ncol=4, byrow=T)
+  
+  projection_matrix <- reproduction_matrix + growth_matrix
+  
+  # Deterministic simulation function
+  deterministic_simulation <- function(initial_state, projection_matrix, steps) {
+    pop_size <- numeric(steps)
+    pop_size[1] <- sum(initial_state)
+    
+    for (t in 2:steps) {
+      initial_state <- projection_matrix %*% initial_state
+      pop_size[t] <- sum(initial_state)
+    }
+    
+    return(pop_size)
+  }
+  
+  deterministic_IC3 <- deterministic_simulation(initial_state_3, projection_matrix, simulation_length)
+  deterministic_IC4 <- deterministic_simulation(initial_state_4, projection_matrix, simulation_length)
+  
+  # Compute deviation
+  deviation_IC3 <- ifelse(deterministic_IC3 == 0, NA, mean_pop_IC3 / deterministic_IC3)
+  deviation_IC4 <- ifelse(deterministic_IC4 == 0, NA, mean_pop_IC4 / deterministic_IC4)
+  
+  deviations <- list(
+    "Large Evenly Distributed Population" = deviation_IC3,
+    "Small Evenly Distributed Population" = deviation_IC4
+  )
+  
+  # Ensure deviations is not empty
+  if (length(deviations) == 0) {
+    stop("Error: No valid deviation data to plot!")
+  }
+  
+  # Set y-axis limits
+  y_min <- min(unlist(deviations), na.rm = TRUE)
+  y_max <- max(unlist(deviations), na.rm = TRUE)
+  
+  # Plot and save the image
+  png(filename="question_6.png", width = 600, height = 400)
+  par(mar = c(5, 4, 4, 8), xpd = TRUE)
   matplot(
     x = 1:length(deviations[[1]]), 
     y = do.call(cbind, deviations), 
     type = "l", lty = 1, col = c("blue", "red"),
     main = "Deviation of Stochastic Model from Deterministic Model",
     xlab = "Time Steps", ylab = "Deviation (Stochastic / Deterministic)",
-    ylim = c(y_min, y_max)  
+    ylim = c(y_min, y_max)
   )
-  legend("topright", legend = names(deviations), col = c("blue", "red"), lty = 1)
-  return("type your written answer here")
+  par(xpd=TRUE)   
+  # Add legend outside the plot (right side)
+  legend("topright", inset = c(-0.3, 0), legend = names(deviations), col = c("blue", "red"), 
+         lty = 1, xjust = 0, yjust = 1, bty = "n")
+  dev.off()
+  
+  return("For initial condition 3 (large population), the deterministic model closely matches the stochastic model as random fluctuations have little impact.For initial condition 4 (small population), the stochastic model deviates significantly, indicating that randomness has a stronger influence, making the deterministic model less reliable.")
 }
-question_6()
 
+question_6()
 
 
 # Section Two: Individual-based ecological neutral theory simulation 
