@@ -961,13 +961,69 @@ Challenge_B <- function() {
   
 # Challenge question C
 Challenge_C <- function() {
+    # Set parameters
+    size <- 100                     
+    speciation_rate <- 0.1          
+    simulation_duration <- 500      
+    replicates <- 20                
+    
+    # Define a range of initial species richness values
+    initial_richness_values <- seq(10, 100, by = 10)
+    
+    # Function to create an initial community with given richness
+    init_community <- function(size, richness){
+      sample(1:richness, size, replace = TRUE)
+    }
+    
+    # Store averaged time series for each initial species richness
+    avg_time_series_list <- list()
+    
+    # Function to run one simulation and record species richness over time
+    record_species_richness <- function(community, generations, speciation_rate) {
+      richness_values <- numeric(generations + 1)
+      richness_values[1] <- species_richness(community)
+      
+      for (gen in 1:generations) {
+        community <- neutral_generation_speciation(community, speciation_rate)
+        richness_values[gen + 1] <- species_richness(community)
+      }
+      return(richness_values)
+    }
+    
+    # Loop over initial richness values and run multiple simulations
+    for (r in initial_richness_values) {
+      replicate_richness <- replicate(replicates, {
+        community <- init_community(size, r)
+        record_species_richness(community, simulation_duration, speciation_rate)
+      })
+      
+      # Compute the mean species richness over all replicates
+      avg_time_series_list[[as.character(r)]] <- rowMeans(replicate_richness, na.rm = TRUE)
+    }
+    
+    # Plot averaged time series for all initial species richness values
+    png(filename = "Challenge_C.png", width = 1000, height = 600)
+    colors <- rainbow(length(initial_richness_values))
+    
+    plot(0:simulation_duration, avg_time_series_list[[1]], type = "l", col = colors[1],
+         xlab = "Generations", ylab = "Average Species Richness",
+         main = "Averaged Species Richness Over Time",
+         ylim = range(sapply(avg_time_series_list, range)))
+    
+    for (i in 2:length(initial_richness_values)) {
+      lines(0:simulation_duration, avg_time_series_list[[i]], col = colors[i])
+    }
+    
+    legend("topright", legend = paste("Initial richness =", initial_richness_values),
+           col = colors, lty = 1, cex = 0.8)
+    Sys.sleep(0.1)
+    dev.off()
+    
+    return("This graph shows the evolution of species richness from various initial conditions. Although initial richness influences early dynamics, the long-term trends converge, suggesting that equilibrium is primarily driven by stochastic processes.")
+  }
   
-  png(filename="Challenge_C", width = 600, height = 400)
-  # plot your graph here
-  Sys.sleep(0.1)
-  dev.off()
+Challenge_C()
   
-}
 
 # Challenge question D
 Challenge_D <- function() {
