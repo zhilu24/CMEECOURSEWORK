@@ -151,7 +151,7 @@ question_5 <- function(){
                         "Small Evenly Distributed Population")
 
   # Get the list of simulation result files
-  file_names <- list.files(path = "output_files", pattern = "simulation_results[0-9]+\\.rda$", full.names = TRUE)
+  file_names <- list.files(pattern = "simulation_results[0-9]+\\.rda$", full.names = TRUE)
   if (length(file_names) == 0) {
     stop("Error: No simulation results found in 'output_files'.")
   }
@@ -217,7 +217,7 @@ question_6 <- function(){
   condition_labels_1 <- c("Large Evenly Distributed Population", "Small Evenly Distributed Population")
   
   # Retrieve all simulation result files
-  file_names <- list.files(path = "output_files", pattern = "simulation_results[0-9]+\\.rda$", full.names = TRUE)
+  file_names <- list.files(pattern = "simulation_results[0-9]+\\.rda$", full.names = TRUE)
   
   # Store data
   all_data <- list(big_spread = list(), small_spread = list())
@@ -695,18 +695,21 @@ neutral_cluster_run <- function(speciation_rate, size, wall_time, interval_rich,
 
 # Question 26 
 process_neutral_cluster_results <- function() {
-  file_names <- list.files(path = "output_files", pattern = "", full.names = TRUE)
+  # obtain simulation result files
+  file_names <- list.files(path = "output", pattern = "neutral_simulation_result[0-9]+\\.rda$", full.names = TRUE)
+  
   # define the community size
   community_sizes <- c(500, 1000, 2500, 5000)
+  
   # initialise the list
   processed_results <- vector("list", length(community_sizes))
   names(processed_results) <- as.character(community_sizes)
+  
   # go through community sizes
-  for (size_index in seq_along(community_sizes)) {
-    size <- community_sizes[size_index]
+  for (size in community_sizes) {
     
     # used to store abundance octaves after all burn-ins
-    sum_octaves <- NULL
+    sum_octaves <- numeric()
     num_simulations <- 0
     
     # go through the file
@@ -718,10 +721,10 @@ process_neutral_cluster_results <- function() {
       }
       
       # extract abundance octaves after burn-in
-      afteroctaves <- results$abundance_octaves[(results$burn_in_time + 1):length(results$abundance_octaves), ]
+      afteroctaves <- abundance_octaves[(burn_in_time + 1):length(abundance_octaves)]
       
-      # calculates the average of abundance octave over all time steps
-      mean_octave <- colMeans(afteroctaves, na.rm = TRUE)
+      # Sum over all time steps
+      mean_octave <- Reduce(sum_vect, afteroctaves) / length(afteroctaves)
       
       # add up all simulation results
       if (is.null(sum_octaves)) {
@@ -735,17 +738,18 @@ process_neutral_cluster_results <- function() {
     
     # calculate the final mean
     if (num_simulations > 0) {
-      processed_results[[size_index]] <- sum_octaves / num_simulations
+      processed_results[[as.character(size)]] <- sum_octaves / num_simulations
     } else {
-      processed_results[[size_index]] <- rep(NA, length(mean_octave))
+      processed_results[[as.character(size)]] <- rep(NA, length(mean_octave))
       warning(paste("No valid simulations found for community size:", size))
     }
   }
   
   # save the processed data
   save(processed_results, file = "processed_neutral_results.rda")
+  
+  # plot function
   plot_neutral_cluster_results <- function() {
-    
     # addrees the results after processes
     load("processed_neutral_results.rda")
     
@@ -757,7 +761,7 @@ process_neutral_cluster_results <- function() {
     # define community size
     community_sizes <- names(processed_results)
     
-    # define the image output
+    # create the bar plots
     png(filename = "plot_neutral_cluster_results.png", width = 1000, height = 800)
     par(mfrow = c(2, 2))  # 2x2 multi-panel layout
     
@@ -776,27 +780,13 @@ process_neutral_cluster_results <- function() {
       )
     }
     dev.off()
-    
     return(processed_results)
   }
-  
   return("Data processed and saved in processed_neutral_results.rda")
 }
-  combined_results <- list() #create your list output here to return
-  # save results to an .rda file
+  process_neutral_cluster_results()
+  plot_neutral_cluster_results()
 
-
-plot_neutral_cluster_results <- function(){
-  
-  # load combined_results from your rda file
-  
-  png(filename="plot_neutral_cluster_results", width = 600, height = 400)
-  # plot your graph here
-  Sys.sleep(0.1)
-  dev.off()
-  
-  return(combined_results)
-}
 
 
 # Challenge questions - these are substantially harder and worth fewer marks.
@@ -804,26 +794,173 @@ plot_neutral_cluster_results <- function(){
 
 # Challenge question A
 Challenge_A <- function(){
-  
-  png(filename="Challenge_A", width = 600, height = 400)
-  # plot your graph here
-  Sys.sleep(0.1)
-  dev.off()
-  
+    # Get all simulation result files
+    file_names <- list.files(pattern = "simulation_results[0-9]+\\.rda$", full.names = TRUE)
+    
+    if (length(file_names) == 0) {
+      stop("Error: No simulation result files found.")
+    }
+    
+    # Initialize an empty list to store data frames
+    data_list <- list()
+    
+    # Define initial conditions
+    initial_state_1 <- state_initialise_adult(4, 100)
+    initial_state_2 <- state_initialise_adult(4, 10)
+    initial_state_3 <- state_initialise_spread(4, 100)
+    initial_state_4 <- state_initialise_spread(4, 10)
+    
+    initial_conditions <- list(
+      initial_state_1, initial_state_2, initial_state_3, initial_state_4
+    )
+    
+    # Labels defining initial conditions
+    condition_labels <- c("Large Adults Population",
+                          "Small Adults Population",
+                          "Large Evenly Distributed Population",
+                          "Small Evenly Distributed Population")
+    
+    # Loop through each file and extract data
+    for (i in seq_along(file_names)) {
+      load(file_names[i]) 
+      
+      iter <- as.numeric(gsub("\\D", "", basename(file_names[i])))  # Extract iteration number
+      
+      # Determine initial condition based on iter value
+      condition_index <- ((iter - 1) %% 4) + 1
+      initial_condition <- condition_labels[condition_index]  # Corrected variable name
+      
+      # Convert results into a data frame
+      simulation_data <- as.data.frame(results)
+      
+      # Create a long-format data frame
+      long_df <- data.frame(
+        simulation_number = i,  
+        initial_condition = initial_condition,
+        time_step = rep(0:(nrow(simulation_data) - 1), each = ncol(simulation_data)),
+        population_size = as.vector(as.matrix(simulation_data)) 
+      )
+      
+      data_list[[i]] <- long_df  # Store in the list
+    }
+    
+    # Combine all data frames into one
+    population_size_df <- do.call(rbind, data_list)
+    
+    # Save the data frame for further use
+    save(population_size_df, file = "population_size_df.rda")
+    
+    # Create a matrix for plotting
+    unique_time_steps <- sort(unique(population_size_df$time_step))
+    simulation_matrix <- matrix(NA, nrow = length(unique_time_steps), ncol = length(data_list))
+    
+    for (i in seq_along(data_list)) {
+      sim_data <- data_list[[i]]
+      simulation_matrix[, i] <- sim_data$population_size[1:length(unique_time_steps)]
+    }
+    
+    # Define colors for different initial conditions
+    condition_colors <- c("blue", "red", "black", "green")
+    color_vector <- rep(condition_colors, length.out = length(data_list))
+    
+    # Plot the population size trajectories
+    png(filename = "Challenge_A.png", width = 1000, height = 600)  # Increased width for better readability
+    par(mar = c(5, 5, 4, 2))
+    
+    matplot(unique_time_steps, simulation_matrix, type = "l", lty = 1, col = color_vector,
+            main = " The Time Series of Population Size in Stochastic Simulations",
+            xlab = "Time Steps", ylab = "Population Size")
+    
+    legend("topright", legend = condition_labels, col = condition_colors, lty = 1, cex = 1.2)
+    
+    Sys.sleep(0.1)
+    dev.off()
+    return(population_size_df)  # return the data frame
 }
+
+  Challenge_A()
+  
 
 # Challenge question B
 Challenge_B <- function() {
+    # Set parameters same as question_22
+    size <- 100
+    speciation_rate <- 0.1
+    burn_in <- 200
+    total_generations <- 2000
+    record_interval <- 1  # Record species richness at each generation
+    num_repeats <- 100  # Number of repeated simulations
+    
+    # Function to record species richness over time
+    record_species_richness <- function(community, total_generations, speciation_rate) {
+      richness_values <- numeric(total_generations)
+      for (generation in 1:total_generations) {
+        community <- neutral_generation_speciation(community, speciation_rate)
+        richness_values[generation] <- species_richness(community)
+      }
+      return(richness_values)
+    }
+    
+    # Run repeated simulations for both initial conditions
+    richness_max <- matrix(NA, nrow = total_generations, ncol = num_repeats)
+    richness_min <- matrix(NA, nrow = total_generations, ncol = num_repeats)
+    
+    for (i in 1:num_repeats) {
+      community_max <- init_community_max(size)
+      community_min <- init_community_min(size)
+      
+      # Burn-in phase
+      for (j in 1:burn_in) {
+        community_max <- neutral_generation_speciation(community_max, speciation_rate)
+        community_min <- neutral_generation_speciation(community_min, speciation_rate)
+      }
+      
+      # Record species richness over time
+      richness_max[, i] <- record_species_richness(community_max, total_generations, speciation_rate)
+      richness_min[, i] <- record_species_richness(community_min, total_generations, speciation_rate)
+    }
+    
+    # Compute mean species richness and 97.2% confidence intervals
+    mean_richness_max <- rowMeans(richness_max, na.rm = TRUE)
+    mean_richness_min <- rowMeans(richness_min, na.rm = TRUE)
+    
+    # Compute confidence intervals (97.2% CI)
+    ci_max <- apply(richness_max, 1, function(x) {
+      se <- sd(x, na.rm = TRUE) / sqrt(length(na.omit(x)))
+      qnorm(0.986, mean = 0, sd = 1) * se
+    })
+    
+    ci_min <- apply(richness_min, 1, function(x) {
+      se <- sd(x, na.rm = TRUE) / sqrt(length(na.omit(x)))
+      qnorm(0.986, mean = 0, sd = 1) * se
+    })
+    
+    # Determine dynamic equilibrium (steady species richness)
+    equilibrium_generation <- which(diff(mean_richness_max) < 0.01 & diff(mean_richness_min) < 0.01)[1]
+    
+    # Plot species richness over time with confidence intervals
+    png("Challenge_B.png", width = 1000, height = 600)
+    par(mar = c(5, 5, 4, 2))
+    
+    plot(1:total_generations, mean_richness_max, type = "l", col = "blue", ylim = range(mean_richness_min - ci_min, mean_richness_max + ci_max),
+         xlab = "Generations", ylab = "Mean Species Richness", main = "Mean Species Richness Over Time")
+    
+    lines(1:total_generations, mean_richness_min, col = "red")
+    polygon(c(1:total_generations, rev(1:total_generations)), c(mean_richness_max + ci_max, rev(mean_richness_max - ci_max)), col = rgb(0, 0, 1, 0.2), border = NA)
+    polygon(c(1:total_generations, rev(1:total_generations)), c(mean_richness_min + ci_min, rev(mean_richness_min - ci_min)), col = rgb(1, 0, 0, 0.2), border = NA)
+    
+    legend("topright", legend = c("Max Diversity Initial Condition", "Min Diversity Initial Condition"), col = c("blue", "red"), lty = 1, cex = 1.2)
+    
+    Sys.sleep(0.1)
+    dev.off()
+    return(paste("The system reaches dynamic equilibrium after approximately", equilibrium_generation, "generations. From this point, species richness become stabilize. And overall the system reaches a dynamic equilibrium where species richness fluctuates around a stable mean."))
+  }
   
-  png(filename="Challenge_B", width = 600, height = 400)
-  # plot your graph here
-  Sys.sleep(0.1)
-  dev.off()
+  Challenge_B()
   
-}
-
+  
 # Challenge question C
-Challenge_B <- function() {
+Challenge_C <- function() {
   
   png(filename="Challenge_C", width = 600, height = 400)
   # plot your graph here
