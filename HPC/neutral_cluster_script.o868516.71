@@ -1,0 +1,78 @@
+R is about to run
+
+R version 4.4.1 (2024-06-14) -- "Race for Your Life"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-conda-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # clear off the work space and turn off the graphic
+> rm(list = ls())
+> graphics.off()
+> 
+> source("MAIN.R")
+[[1]]
+[1] 12 12  6  1  1
+
+[[2]]
+[1] 13  6  4  2  2
+
+> iter <- as.numeric(Sys.getenv("PBS_ARRAY_INDEX"))
+> 
+> 
+> # set the random seed
+> set.seed(iter)
+> 
+> # allocate the community scale
+> if (iter >= 1 && iter <= 25) {
++   size <- 500
++ } else if (iter >= 26 && iter <= 50) {
++   size <- 1000
++ } else if (iter >= 51 && iter <= 75) {
++   size <- 2500
++ } else if (iter >= 76 && iter <= 100) {
++   size <- 5000
++ } else {
++   stop("the iter value is invalid, it should between 1 and 100")
++ }
+> 
+> # set the other parameter
+>  speciation_rate <- 0.1 
+>  interval_rich <- 1
+>  interval_oct <- size/10
+>  burn_in_generations <- 8*size
+>  wall_time <- 690
+> 
+>  output_file_name <- paste("neutral_simulation_results_iter", iter, ".rda", sep = "")
+>  
+>  neutral_cluster_run(
++    speciation_rate = speciation_rate,
++    size = size,
++    wall_time = wall_time,
++    interval_rich = interval_rich,
++    interval_oct = interval_oct,
++    burn_in_generations = burn_in_generations,
++    output_file_name = output_file_name)
+>  
+> 
+R has finished running
+
+============================================
+
+        Job resource usage summary 
+
+                 Memory (GB)    NCPUs
+ Requested  :         1             1
+ Used       :         0 (peak)   0.95 (ave)
+
+============================================

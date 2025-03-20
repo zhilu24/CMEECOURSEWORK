@@ -7,9 +7,10 @@ module load anaconda3/personal
 echo "R is about to run"
 
 cp $HOME/zz8024_HPC_2024_MAIN.R $TMPDIR
+cp $HOME/Demographic.R $TMPDIR
 cp $HOME/zz8024_HPC_neutral_cluster.R $TMPDIR
 R --vanilla <zz8024_HPC_neutral_cluster.R
 
-mv simulation_results* $HOME/output_files/neutral_cluster_output
+mv neutral_simulation_results_iter*.rda $HOME/output_files
 
 echo "R has finished running"

@@ -29,18 +29,18 @@ if (iter >= 1 && iter <= 25) {
  burn_in_generations <- 8*size
  wall_time <- 690
 
- output_file_name <- paste("neutral_simulation_result_iter", iter, ".rda", sep = "")
+ output_file_name <- paste("neutral_simulation_results_iter", iter, ".rda", sep = "")
  
 # run the simulation
-result <- neutral_cluster_run(
+neutral_cluster_run(
    speciation_rate = speciation_rate,
    size = size,
    wall_time = wall_time,
    interval_rich = interval_rich,
    interval_oct = interval_oct,
-   burn_in_generations = burn_in_generations
+   burn_in_generations = burn_in_generations,
+   output_file_name = output_file_name
  )
-# Save the results
-save(result, file = output_file_name)
+
 
  

@@ -694,100 +694,92 @@ neutral_cluster_run <- function(speciation_rate, size, wall_time, interval_rich,
 # the cluster
 
 # Question 26 
-process_neutral_cluster_results <- function() {
+process_neutral_cluster_results <- function(size) {
   # obtain simulation result files
-  file_names <- list.files(path = "output", pattern = "neutral_simulation_result[0-9]+\\.rda$", full.names = TRUE)
+  file_names <- list.files(path = "output", pattern = "neutral_simulation_results[0-9]+\\.rda$", full.names = TRUE)
   
-  # define the community size
-  community_sizes <- c(500, 1000, 2500, 5000)
-  
-  # initialise the list
-  processed_results <- vector("list", length(community_sizes))
-  names(processed_results) <- as.character(community_sizes)
-  
-  # go through community sizes
-  for (size in community_sizes) {
+  # Filter the files based on iteration range
+  iter_range <- which((1:length(file_names) - 1) %/% 25 + 1 == which(c(500, 1000, 2500, 5000) == size))
+  selected_files <- file_names[iter_range]
     
-    # used to store abundance octaves after all burn-ins
-    sum_octaves <- numeric()
-    num_simulations <- 0
+  # initialize storage
+  sum_octaves <- NULL
+  num_simulations <- 0
+  mean_octave <- NULL
     
-    # go through the file
-    for (file in file_names) {
-      load(file)  
-
-      if (!exists("results") || !is.list(results)) {
-        next
+  # Process the selected files
+  for (file in selected_files) {
+    load(file)
+      
+    if (!exists("abundance_list") || !is.list(abundance_list)) {
+      next
       }
       
-      # extract abundance octaves after burn-in
-      afteroctaves <- abundance_octaves[(burn_in_time + 1):length(abundance_octaves)]
+    # extract abundance octaves after burn-in
+    afterburnin <- abundance_list[(burn_in_generations + 1):length(abundance_list)]
       
-      # Sum over all time steps
-      mean_octave <- Reduce(sum_vect, afteroctaves) / length(afteroctaves)
-      
-      # add up all simulation results
-      if (is.null(sum_octaves)) {
-        sum_octaves <- mean_octave
-      } else {
-        sum_octaves <- sum_octaves + mean_octave
+    if (length(afterburnin) == 0) {
+      next  # Skip if afterburnin is empty
       }
       
-      num_simulations <- num_simulations + 1
+    # compute the mean octave
+    mean_octave <- Reduce(sum_vect, afterburnin) / length(afterburnin)
+      
+     # add up all simulation results
+    if (is.null(sum_octaves)) {
+      sum_octaves <- mean_octave
+    } else {
+      sum_octaves <- sum_octaves + mean_octave
+    }
+      
+    num_simulations <- num_simulations + 1
     }
     
     # calculate the final mean
     if (num_simulations > 0) {
-      processed_results[[as.character(size)]] <- sum_octaves / num_simulations
+      processed_results <- sum_octaves / num_simulations
     } else {
-      processed_results[[as.character(size)]] <- rep(NA, length(mean_octave))
+      processed_results <- rep(NA, length(mean_octave))
       warning(paste("No valid simulations found for community size:", size))
     }
-  }
   
-  # save the processed data
-  save(processed_results, file = "processed_neutral_results.rda")
-  
-  # plot function
-  plot_neutral_cluster_results <- function() {
+    # save the processed data
+    save(processed_results, file = "processed_neutral_results.rda")
+}
+    # plot function
+    plot_neutral_cluster_results <- function() {
     # addrees the results after processes
-    load("processed_neutral_results.rda")
+    result_file <- paste0("processed_neutral_results_", size, ".rda")
+    load(result_file)
     
     # ensure the data can be processed
-    if (!exists("processed_results") || !is.list(processed_results)) {
+    if (!exists("processed_results") || !is.numeric(processed_results)) {
       stop("Error: processed_results data not found.")
     }
     
-    # define community size
-    community_sizes <- names(processed_results)
-    
     # create the bar plots
-    png(filename = "plot_neutral_cluster_results.png", width = 1000, height = 800)
+    png(filename = paste0("plot_neutral_cluster_results_", size, "png"), width = 1000, height = 800)
     par(mfrow = c(2, 2))  # 2x2 multi-panel layout
-    
-    # through all community sizes and draw a bar graph
-    for (size in community_sizes) {
-      octave_data <- processed_results[[size]]
       
       # plot
       barplot(
-        octave_data,
+        processed_results,
         main = paste("Community Size:", size),
         xlab = "Abundance Octave",
         ylab = "Mean Abundance",
         col = "blue",
         border = "white"
       )
+      dev.off()
     }
-    dev.off()
-    return(processed_results)
+  # Run for each community size
+  community_sizes <- c(500, 1000, 2500, 5000)
+  for (size in community_sizes) {
+    process_neutral_cluster_results(size)
+    plot_neutral_cluster_results(size)
   }
-  return("Data processed and saved in processed_neutral_results.rda")
-}
-  process_neutral_cluster_results()
-  plot_neutral_cluster_results()
 
-
+  
 
 # Challenge questions - these are substantially harder and worth fewer marks.
 # I suggest you only attempt these if you've done all the main questions. 
