@@ -1,0 +1,82 @@
+HPC long practical feedback for Lucia ( Zhilu Zhang ) 2025
+ 
+email : zhilu.zhang24@imperial.ac.uk
+username : zz8024
+ 
+Your final mark is : 69.17 %
+ 
+Mark allocation break down
+1) Technically correct answers to all questions worth 60 % of final grade
+Your mark :  47.6 /60
+2) Quality of free text answers worth 8 % of final grade
+Your mark :  5 /8
+3) Quality of graphical outputs worth 8 % of final grade
+Your mark :  7.4 /10
+4) Quality of code worth 8 % of final grade
+Your mark :  5 /8
+5) Answers to challenge questions worth 16 % of final grade
+Your mark :  4.2 /14
+ 
+Marks for main questions
+Q 0 :    3 / 3
+Q 1 :    4 / 4
+Q 2 :    3 / 3
+Q 3 :    5 / 10    comments: it basically works and is along the right lines but the results were wrong and when I repeated the run locally I found that there were problems in the simulation code and outputted RDA files.
+Q 4 :    10 / 10
+Q 5 :    2 / 8    comments: Although the graph was well made unfortunately a lot of other issues with this question. The text describes a result that does not match either the graph or the expected result, it attempts to explain why a large population of adults is the most likely to go extinct when in reality the opposite is true. Additionally, the data in the graph is not as expected, from some basic testing it looks like it probably correctly processes the .rda files but that for some reason the RDA files themselves contain incorrect simulations. Another issue is that the text answer was not returned because you can't use two 'return' commands in a function
+Q 6 :    6.5 / 10    comments: good answer in many respects but the size of the deviations was incorrect a factor of 5 difference means something is quantitatively wrong with the results
+Q 7 :    2 / 2
+Q 8 :    1 / 1
+Q 9 :    1 / 1
+Q 10 :    2 / 2
+Q 11 :    2 / 2
+Q 12 :    2 / 2
+Q 13 :    2 / 2
+Q 14 :    3 / 3
+Q 15 :    3 / 3
+Q 16 :    1 / 1
+Q 17 :    1 / 1
+Q 18 :    3.5 / 4    comments: text answer wasn't quite correct it's not the species that have the same fitness but the individuals.
+Q 19 :    3 / 3
+Q 20 :    3 / 3
+Q 21 :    2 / 2
+Q 22 :    4 / 4
+Q 23 :    6 / 6
+Q 24 :    5 / 6    comments: uses incorrect speciation rate otherwise looks good
+Q 25 :    10 / 10
+Q 26 :    2 / 10    comments: good attempt but not complete, was supposed not to require an input parameter (but this function uses size) and was supposed to produce a single 4 panel graph.  Neither the RDA data summary file nor the graph were handed in independently and despite some attempts I could not easily get the function to produce these - I think it would need a lot of edits to work as intended.
+          ---------
+Total     92 / 116
+          ---------
+ 
+Marks for text quality :  5 /8
+Comments...
+In question 1 excellent
+In question 2 good but doesn't focus on the right question - this one was about stochastic fluctuations and not extinction - this simulation does not result in extinction (except in exceptional and rare edge cases)
+In question 5 the text attempts to explain an incorrect result which demonstrates a substantial lack of understanding - it is also not well written.'
+In question 6 very good
+In question 14 good but confuses genetic drift with ecological drift which is quite an error in understanding
+In question 18 would have been nice to mention dynamic equilibrium, also some minor errors of understanding e.g. around difference between species fitness and individual fitness
+In question 22 good but some continuation of the same errors of understanding expressed in earlier questions
+ 
+Marks for graphics quality :  7.4 /10
+Comments...
+In question 1 some of the data obscured by the legend
+In question 2 legend obscured the data
+In question 5 excellent graph, though sadly of the incorrect results.
+In question 6 legend is poorly placed and cut off otherwise very good
+In question 14 very good - I'd prefer lines only and no grid, but these are very minor points
+In question 18 excellent
+In question 22 octave labels would have been nice, also some data went above the y axis limits
+In question 26 no graph handed in
+ 
+Marks for code quality :  5 /8
+Comments...
+some useful comments in code but otherwise some issues around coding style like trying to return two results and main.R file running lots of code instead of just loading the functions into workspace. Needed to do quite a bit of hand editing to get things running during the marking phase.
+ 
+Marks for challenge questions :  4.2 /14
+Comments...
+challenge question A, good attempt but lines needed some transparency and more repeats to match what was asked for here, also the lines don't appear to be correctly labeled from what I can see, the large adults should be clearly ahead if this was working and they are no. The legend obscures some data on the graph
+very good - minor comments only - could run for fewer generations and remove the box from the legend
+challenge question D, not attempted
+challenge question E, not attempted
